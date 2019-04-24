@@ -18,8 +18,14 @@ option(BUILD_OPENGL3_DEMOS OFF)
 option(BUILD_UNIT_TESTS OFF)
 add_subdirectory(Glitter/Vendor/bullet)
 
+
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    set(CMAKE_CXX_STANDARD 17)
+    add_definitions(-Wall)
+    add_definitions(-fno-rtti)
+    add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
+
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
     if(NOT WIN32)
@@ -58,8 +64,11 @@ add_definitions(-DGLFW_INCLUDE_NONE
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES})
+add_subdirectory(Glitter/Vendor/catch2)
+
 target_link_libraries(${PROJECT_NAME} assimp glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)
+target_link_libraries(tests Catch2::Catch2)
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})

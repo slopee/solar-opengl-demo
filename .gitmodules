@@ -23,6 +23,6 @@
     url = https://github.com/bulletphysics/bullet3.git
     branch = master
 [submodule "Glitter/Vendor/catch2"]
-    path = Glitter/Vendor/catch2
-    url = https://github.com/catchorg/Catch2.git
+	  path = Glitter/Vendor/catch2
+	  url = https://github.com/catchorg/Catch2.git
     branch = master

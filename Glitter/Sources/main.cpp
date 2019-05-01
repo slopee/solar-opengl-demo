@@ -9,8 +9,10 @@
 #include <cstdio>
 #include <cstdlib>
 
-int main(int argc, char * argv[]) {
+#include <test/test.h>
 
+int main(int argc, char * argv[]) {
+	position p;
     // Load GLFW and Create a Window
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

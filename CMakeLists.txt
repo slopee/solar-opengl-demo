@@ -16,8 +16,7 @@ option(BUILD_CPU_DEMOS OFF)
 option(BUILD_EXTRAS OFF)
 option(BUILD_OPENGL3_DEMOS OFF)
 option(BUILD_UNIT_TESTS OFF)
-add_subdirectory(Glitter/Vendor/bullet)
-
+#add_subdirectory(Glitter/Vendor/bullet)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
@@ -35,15 +34,17 @@ endif()
 
 include_directories(Glitter/Headers/
                     Glitter/Vendor/assimp/include/
-                    Glitter/Vendor/bullet/src/
+#                    Glitter/Vendor/bullet/src/
                     Glitter/Vendor/glad/include/
                     Glitter/Vendor/glfw/include/
                     Glitter/Vendor/glm/
                     Glitter/Vendor/stb/)
 
 file(GLOB VENDORS_SOURCES Glitter/Vendor/glad/src/glad.c)
-file(GLOB PROJECT_HEADERS Glitter/Headers/*.hpp)
-file(GLOB PROJECT_SOURCES Glitter/Sources/*.cpp)
+#file(GLOB PROJECT_HEADERS Glitter/Headers/*/*.h*)
+#file(GLOB PROJECT_SOURCES Glitter/Sources/*/*.cpp)
+file(GLOB_RECURSE PROJECT_HEADERS Glitter/Headers/App/*.h*)
+file(GLOB_RECURSE PROJECT_SOURCES Glitter/Sources/App/*.cpp)
 file(GLOB PROJECT_SHADERS Glitter/Shaders/*.comp
                           Glitter/Shaders/*.frag
                           Glitter/Shaders/*.geom
@@ -59,16 +60,24 @@ source_group("Shaders" FILES ${PROJECT_SHADERS})
 source_group("Sources" FILES ${PROJECT_SOURCES})
 source_group("Vendors" FILES ${VENDORS_SOURCES})
 
+add_library(Glitter_lib STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS})
+target_include_directories(Glitter_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
+add_executable(${PROJECT_NAME} Glitter/Sources/main.cpp Glitter/Headers/glitter.hpp
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES})
-add_subdirectory(Glitter/Vendor/catch2)
 
 target_link_libraries(${PROJECT_NAME} assimp glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
-                      BulletDynamics BulletCollision LinearMath)
-target_link_libraries(tests Catch2::Catch2)
+                      Glitter_lib)
+                      #BulletDynamics BulletCollision LinearMath
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+
+# Testing
+add_subdirectory(Glitter/Vendor/catch2)
+add_subdirectory(Glitter/Tests)
+enable_testing ()
+add_test (NAME tests COMMAND Test)

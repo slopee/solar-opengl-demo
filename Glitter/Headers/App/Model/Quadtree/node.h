@@ -7,4 +7,11 @@ public:
   void Test();
 };
 
+struct Position
+{
+	int i;
+	int j;
+	int z;
+};
+
 }

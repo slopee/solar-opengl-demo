@@ -8,7 +8,10 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Glitter/Vendor/catch2/contrib
 
 #find_package(Catch2 REQUIRED)
 
-add_executable(Glitter_tests ${PROJECT_SOURCE_DIR}/Sources/main.cpp)
+file(GLOB_RECURSE PROJECT_SOURCES ${PROJECT_SOURCE_DIR}/Sources/*.cpp)
+file(GLOB_RECURSE PROJECT_HEADERS ${PROJECT_SOURCE_DIR}/Sources/*.h)
+
+add_executable(Glitter_tests ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 target_link_libraries(Glitter_tests Glitter_lib Catch2::Catch2)
 
 include(CTest)

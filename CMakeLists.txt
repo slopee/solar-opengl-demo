@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 
 project(Glitter)
 
+################################################################################
+###############################THIRD PARTY DEPS#################################
+################################################################################
 set(GLAD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Vendor/glad/include/)
 
 option(GLFW_BUILD_DOCS OFF)
@@ -24,7 +27,9 @@ option(BUILD_UNIT_TESTS OFF)
 
 add_subdirectory(Glitter/Vendor/dear-imgui)
 
-
+################################################################################
+################################COMPILE FLAGS###################################
+################################################################################
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
     set(CMAKE_CXX_STANDARD 17)
@@ -39,7 +44,10 @@ else()
     endif()
 endif()
 
-include_directories(Glitter/Headers/
+################################################################################
+###############################SOURCES LIBRARY##################################
+################################################################################
+include_directories(Glitter/Sources/
                     Glitter/Vendor/assimp/include/
 #                    Glitter/Vendor/bullet/src/
                     ${GLAD_INCLUDE_DIR}
@@ -52,17 +60,18 @@ set(VENDORS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Vendor/)
 file(GLOB VENDORS_SOURCES ${VENDORS_ROOT}/glad/src/glad.c)
 #file(GLOB PROJECT_HEADERS Glitter/Headers/*/*.h*)
 #file(GLOB PROJECT_SOURCES Glitter/Sources/*/*.cpp)
-set(HEADERS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Headers/App/)
-file(GLOB_RECURSE PROJECT_HEADERS Glitter/Headers/App/*.h*)
+set(HEADERS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/)
+file(GLOB_RECURSE PROJECT_HEADERS ${HEADERS_ROOT}/*.h*)
 
-set(SOURCES_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/App/)
-file(GLOB_RECURSE PROJECT_SOURCES Glitter/Sources/App/*.cpp)
+set(SOURCES_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/)
+file(GLOB_RECURSE PROJECT_SOURCES ${SOURCES_ROOT}/*.cpp)
+list(FILTER PROJECT_SOURCES EXCLUDE REGEX "main.cpp")
 
 set(SHADERS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Shaders/)
-file(GLOB PROJECT_SHADERS Glitter/Shaders/*.comp
-                          Glitter/Shaders/*.frag
-                          Glitter/Shaders/*.geom
-                          Glitter/Shaders/*.vert)
+file(GLOB PROJECT_SHADERS ${SHADERS_ROOT}/*.comp
+                          ${SHADERS_ROOT}/*.frag
+                          ${SHADERS_ROOT}/*.geom
+                          ${SHADERS_ROOT}/*.vert)
 
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                           Readme.md
@@ -78,11 +87,12 @@ source_group(TREE ${VENDORS_ROOT} PREFIX "Vendors" FILES ${VENDORS_SOURCES})
 # Library (separating project)
 add_library(Glitter_lib STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_SHADERS})
 target_include_directories(Glitter_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(Glitter_lib dear-imgui glfw ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 
 # Main project
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
-add_executable(${PROJECT_NAME} Glitter/Sources/main.cpp Glitter/Headers/glitter.hpp
+add_executable(${PROJECT_NAME} Glitter/Sources/main.cpp
                                ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES})
 

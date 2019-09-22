@@ -1,4 +1,4 @@
-#include "App/Model/Quadtree/node.h"
+#include "App/Model/Quadtree/Node.h"
 #include <iostream>
 
 namespace Model::QuadTree {

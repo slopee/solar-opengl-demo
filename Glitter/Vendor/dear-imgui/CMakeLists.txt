@@ -6,7 +6,7 @@ SET (LIB_TYPE STATIC)
 file(GLOB IMGUI_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 file(GLOB IMGUI_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
-add_library(dear-imgui ${LIB_TYPE} ${IMGUI_SOURCES} ${IMGUI_SOURCES})
+add_library(dear-imgui ${LIB_TYPE} ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
 add_definitions(-DIMGUI_IMPL_OPENGL_LOADER_GLAD)
 
@@ -21,6 +21,8 @@ include_directories(
 #    ${GLFW_INCLUDE_DIR}
 #    ${GLAD_INCLUDE_DIR})
 
+target_link_libraries(dear-imgui glfw
+                      ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 #target_link_libraries(dear-imgui
 #    ${OPENGL_LIBRARIES}
 #    ${GLFW_LIBRARIES}
